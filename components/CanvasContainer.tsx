@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, memo, useContext } from 'react';
 import {
     StyleSheet,
     View,
@@ -9,13 +9,14 @@ import {
     heightPercentageToDP as hp
 } from 'react-native-responsive-screen';
 import Canvas from 'react-native-canvas';
+import { GlobalContext } from '@contextAPI/contexts/GlobalContext';
 
-interface CanvasContainerProps {
-    canvasRef: React.RefObject<Canvas>;
-    selectedColor: string;
-}
+const CanvasContainer: React.FC = () => {
 
-const CanvasContainer: React.FC<CanvasContainerProps> = ({ canvasRef, selectedColor }) => {
+    const context = useContext(GlobalContext);
+    const { globalState, setGlobalState } = context;
+    const { GlobalInformation } = globalState;
+    const { canvasRef } = GlobalInformation;
 
     const [isDrawing, setIsDrawing] = useState(false);
     const [lastX, setLastX] = useState(0);
@@ -27,11 +28,27 @@ const CanvasContainer: React.FC<CanvasContainerProps> = ({ canvasRef, selectedCo
             const ctx = canvas.getContext('2d');
             canvas.width = wp(100);
             canvas.height = hp(100);
-            ctx.strokeStyle = selectedColor;
+            ctx.strokeStyle = GlobalInformation.selectedColor;
             ctx.lineWidth = 2;
             ctx.lineCap = 'round';
         }
     }, []);
+
+    const saveHistory = async () => {
+        if (canvasRef.current) {
+            const canvas = canvasRef.current;
+            const dataURL = await canvas.toDataURL();
+            const cleanedDataURL = dataURL.replace(/"/g, '');
+            setGlobalState((prevState) => ({
+                ...prevState,
+                GlobalInformation: {
+                    ...prevState.GlobalInformation,
+                    canvasHistory: [...prevState.GlobalInformation.canvasHistory, cleanedDataURL],
+                    canvasHistoryIndex: prevState.GlobalInformation.canvasHistoryIndex + 1,
+                },
+            }));
+        }
+    };
 
     const panResponder = PanResponder.create({
         onStartShouldSetPanResponder: () => true,
@@ -45,7 +62,7 @@ const CanvasContainer: React.FC<CanvasContainerProps> = ({ canvasRef, selectedCo
             if (!isDrawing || !canvasRef.current)
                 return;
             const ctx = canvasRef.current.getContext('2d');
-            ctx.strokeStyle = selectedColor;
+            ctx.strokeStyle = GlobalInformation.selectedColor;
             ctx.beginPath();
             ctx.moveTo(lastX, lastY);
             ctx.lineTo(e.nativeEvent.locationX, e.nativeEvent.locationY);
@@ -53,7 +70,10 @@ const CanvasContainer: React.FC<CanvasContainerProps> = ({ canvasRef, selectedCo
             setLastX(e.nativeEvent.locationX);
             setLastY(e.nativeEvent.locationY);
         },
-        onPanResponderRelease: () => setIsDrawing(false)
+        onPanResponderRelease: () => {
+            setIsDrawing(false);
+            saveHistory();
+        }
     });
 
     return (

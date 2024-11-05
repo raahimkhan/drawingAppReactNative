@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useContext } from 'react';
 import {
     StyleSheet,
     View,
@@ -8,19 +8,29 @@ import {
     heightPercentageToDP as hp
 } from 'react-native-responsive-screen';
 import { colors } from '@constants/colors';
+import { GlobalContext } from '@contextAPI/contexts/GlobalContext';
 
-interface ColorPaletteProps {
-    selectedColor: string;
-    onColorSelect: (color: string) => void;
-}
+const ColorPalette: React.FC = () => {
 
-const ColorPalette: React.FC<ColorPaletteProps> = ({ selectedColor, onColorSelect }) => {
+    const context = useContext(GlobalContext);
+    const { globalState, setGlobalState } = context;
+    const { GlobalInformation } = globalState;
 
     const SQUARES_PER_ROW = 5;
     const rows = Array.from(
         { length: Math.ceil(colors.length / SQUARES_PER_ROW) },
         (_, rowIndex) => colors.slice(rowIndex * SQUARES_PER_ROW, (rowIndex + 1) * SQUARES_PER_ROW)
     );
+
+    const changeColor = (color: string) => {
+        setGlobalState(prevState => ({
+            ...prevState,
+            GlobalInformation: {
+                ...prevState.GlobalInformation,
+                selectedColor: color,
+            }
+        }));
+    }
 
     return (
         <View style={styles.colorPalette}>
@@ -30,11 +40,11 @@ const ColorPalette: React.FC<ColorPaletteProps> = ({ selectedColor, onColorSelec
                         {row.map((color, columnIndex) => (
                             <TouchableOpacity
                                 key={`square-${rowIndex}-${columnIndex}`}
-                                onPress={() => onColorSelect(color)}
+                                onPress={() => changeColor(color)}
                                 style={[
                                     styles.square,
                                     { backgroundColor: color },
-                                    color === selectedColor && styles.selectedSquare
+                                    color === GlobalInformation.selectedColor && styles.selectedSquare
                                 ]}
                             />
                         ))}

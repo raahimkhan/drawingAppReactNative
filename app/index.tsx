@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useContext, useRef } from 'react';
 import {
     SafeAreaView,
     StyleSheet,
@@ -7,26 +7,30 @@ import ColorPalette from '@components/ColorPalette';
 import CanvasOptions from '@components/CanvasOptions';
 import CanvasContainer from '@/components/CanvasContainer';
 import Canvas from 'react-native-canvas';
+import { GlobalContext } from '@contextAPI/contexts/GlobalContext';
 
 const Home: React.FC = () => {
 
     const ref = useRef<Canvas>(null);
 
-    const [selectedColor, setSelectedColor] = useState('#FF0000');
+    const context = useContext(GlobalContext);
+    const { setGlobalState } = context;
+
+    useEffect(() => {
+        setGlobalState(prevState => ({
+            ...prevState,
+            GlobalInformation: {
+                ...prevState.GlobalInformation,
+                canvasRef: ref,
+            }
+        }));
+    }, []);
 
     return (
         <SafeAreaView style={styles.container}>
-            <ColorPalette
-                selectedColor={selectedColor}
-                onColorSelect={setSelectedColor}
-            />
-            <CanvasOptions
-                canvasRef={ref}
-            />
-            <CanvasContainer
-                canvasRef={ref}
-                selectedColor={selectedColor}
-            />
+            <ColorPalette />
+            <CanvasOptions />
+            <CanvasContainer />
         </SafeAreaView>
     );
 }
