@@ -5,6 +5,7 @@ export const GlobalInitialState: Global = {
         selectedColor: '#FF0000',
         canvasRef: { current: null },
         canvasHistory: [],
-        canvasHistoryIndex: -1
+        canvasHistoryIndex: -1,
+        penThickness: 1,
     },
 };

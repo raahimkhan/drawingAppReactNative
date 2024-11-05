@@ -5,4 +5,5 @@ export interface GlobalInformation {
     canvasRef: React.RefObject<Canvas>;
     canvasHistory: string[];
     canvasHistoryIndex: number;
+    penThickness: number;
 }

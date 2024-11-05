@@ -29,7 +29,7 @@ const CanvasContainer: React.FC = () => {
             canvas.width = wp(100);
             canvas.height = hp(100);
             ctx.strokeStyle = GlobalInformation.selectedColor;
-            ctx.lineWidth = 2;
+            ctx.lineWidth = GlobalInformation.penThickness;
             ctx.lineCap = 'round';
         }
     }, []);
@@ -63,6 +63,7 @@ const CanvasContainer: React.FC = () => {
                 return;
             const ctx = canvasRef.current.getContext('2d');
             ctx.strokeStyle = GlobalInformation.selectedColor;
+            ctx.lineWidth = GlobalInformation.penThickness;
             ctx.beginPath();
             ctx.moveTo(lastX, lastY);
             ctx.lineTo(e.nativeEvent.locationX, e.nativeEvent.locationY);

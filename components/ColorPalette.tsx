@@ -44,9 +44,12 @@ const ColorPalette: React.FC = () => {
                                 style={[
                                     styles.square,
                                     { backgroundColor: color },
-                                    color === GlobalInformation.selectedColor && styles.selectedSquare
                                 ]}
-                            />
+                            >
+                                {GlobalInformation.selectedColor === color && (
+                                    <View style={styles.selectionIndicator} />
+                                )}
+                            </TouchableOpacity>
                         ))}
                     </View>
                 ))}
@@ -70,11 +73,16 @@ const styles = StyleSheet.create({
     square: {
         width: '15%',
         aspectRatio: 1,
-        borderWidth: 0,
-    },
-    selectedSquare: {
         borderWidth: 2,
         borderColor: 'black',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    selectionIndicator: {
+        width: '30%',
+        aspectRatio: 1,
+        backgroundColor: 'black',
+        borderRadius: 999,
     },
 });
 

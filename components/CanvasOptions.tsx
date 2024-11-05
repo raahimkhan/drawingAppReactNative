@@ -10,6 +10,7 @@ import {
 } from 'react-native-responsive-screen';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Entypo from '@expo/vector-icons/Entypo';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { GlobalContext } from '@contextAPI/contexts/GlobalContext';
 import { Image } from 'react-native-canvas';
 
@@ -141,6 +142,16 @@ const CanvasOptions: React.FC = () => {
                 <Entypo
                     name="eraser"
                     size={wp(10)}
+                    color="black"
+                />
+            </TouchableHighlight>
+            <TouchableHighlight
+                // onPress={() => clearCanvas()}
+                underlayColor="#F5F5F5"
+            >
+                <FontAwesome6
+                    name="pencil"
+                    size={wp(8.5)}
                     color="black"
                 />
             </TouchableHighlight>

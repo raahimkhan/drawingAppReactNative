@@ -6,6 +6,7 @@ import {
 import ColorPalette from '@components/ColorPalette';
 import CanvasOptions from '@components/CanvasOptions';
 import CanvasContainer from '@/components/CanvasContainer';
+import PenThicknessChanger from '@components/PenThicknessChanger';
 import Canvas from 'react-native-canvas';
 import { GlobalContext } from '@contextAPI/contexts/GlobalContext';
 
@@ -31,6 +32,7 @@ const Home: React.FC = () => {
             <ColorPalette />
             <CanvasOptions />
             <CanvasContainer />
+            <PenThicknessChanger />
         </SafeAreaView>
     );
 }
