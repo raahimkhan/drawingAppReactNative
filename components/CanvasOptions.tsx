@@ -113,6 +113,16 @@ const CanvasOptions: React.FC = () => {
         }
     };
 
+    const enablePenThicknessSlider = () => {
+        setGlobalState(prevState => ({
+            ...prevState,
+            GlobalInformation: {
+                ...prevState.GlobalInformation,
+                penThicknessButtonClicked: true,
+            }
+        }));
+    }
+
     return (
         <View style={styles.canvasOptions}>
             <TouchableHighlight
@@ -146,7 +156,7 @@ const CanvasOptions: React.FC = () => {
                 />
             </TouchableHighlight>
             <TouchableHighlight
-                // onPress={() => clearCanvas()}
+                onPress={() => enablePenThicknessSlider()}
                 underlayColor="#F5F5F5"
             >
                 <FontAwesome6

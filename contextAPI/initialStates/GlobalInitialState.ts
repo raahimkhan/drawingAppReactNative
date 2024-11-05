@@ -7,5 +7,6 @@ export const GlobalInitialState: Global = {
         canvasHistory: [],
         canvasHistoryIndex: -1,
         penThickness: 1,
+        penThicknessButtonClicked: false
     },
 };

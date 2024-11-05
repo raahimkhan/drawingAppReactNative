@@ -61,6 +61,15 @@ const CanvasContainer: React.FC = () => {
         onPanResponderMove: (e) => {
             if (!isDrawing || !canvasRef.current)
                 return;
+            if (GlobalInformation.penThicknessButtonClicked) {
+                setGlobalState(prevState => ({
+                    ...prevState,
+                    GlobalInformation: {
+                        ...prevState.GlobalInformation,
+                        penThicknessButtonClicked: false,
+                    }
+                }));
+            }
             const ctx = canvasRef.current.getContext('2d');
             ctx.strokeStyle = GlobalInformation.selectedColor;
             ctx.lineWidth = GlobalInformation.penThickness;

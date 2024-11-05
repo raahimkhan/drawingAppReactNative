@@ -15,7 +15,8 @@ const Home: React.FC = () => {
     const ref = useRef<Canvas>(null);
 
     const context = useContext(GlobalContext);
-    const { setGlobalState } = context;
+    const { globalState, setGlobalState } = context;
+    const { GlobalInformation } = globalState;
 
     useEffect(() => {
         setGlobalState(prevState => ({
@@ -27,12 +28,29 @@ const Home: React.FC = () => {
         }));
     }, []);
 
+    useEffect(() => {
+        if (GlobalInformation.penThicknessButtonClicked) {
+            const timer = setTimeout(() => {
+                setGlobalState(prevState => ({
+                    ...prevState,
+                    GlobalInformation: {
+                        ...prevState.GlobalInformation,
+                        penThicknessButtonClicked: false,
+                    }
+                }));
+            }, 2000);
+            return () => clearTimeout(timer);
+        }
+    }, [GlobalInformation.penThicknessButtonClicked]);
+
     return (
         <SafeAreaView style={styles.container}>
             <ColorPalette />
             <CanvasOptions />
             <CanvasContainer />
-            <PenThicknessChanger />
+            {
+                GlobalInformation.penThicknessButtonClicked && <PenThicknessChanger />
+            }
         </SafeAreaView>
     );
 }

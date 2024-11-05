@@ -6,4 +6,5 @@ export interface GlobalInformation {
     canvasHistory: string[];
     canvasHistoryIndex: number;
     penThickness: number;
+    penThicknessButtonClicked: boolean;
 }

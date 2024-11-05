@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import {
     StyleSheet,
     View,
@@ -13,6 +13,8 @@ import {
 
 const PenThicknessChanger: React.FC = () => {
 
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
     const context = useContext(GlobalContext);
     const { globalState, setGlobalState } = context;
     const { GlobalInformation } = globalState;
@@ -25,7 +27,27 @@ const PenThicknessChanger: React.FC = () => {
                 penThickness: value,
             }
         }));
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+        timeoutRef.current = setTimeout(() => {
+            setGlobalState(prevState => ({
+                ...prevState,
+                GlobalInformation: {
+                    ...prevState.GlobalInformation,
+                    penThicknessButtonClicked: false,
+                }
+            }));
+        }, 2000);
     }
+
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+        };
+    }, []);
 
     return (
         <View style={styles.sliderContainer}>
