@@ -11,8 +11,11 @@ import {
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import AntDesign from '@expo/vector-icons/AntDesign';
 import { GlobalContext } from '@contextAPI/contexts/GlobalContext';
 import { Image } from 'react-native-canvas';
+import RNFS from 'react-native-fs';
+import Share from 'react-native-share';
 
 const CanvasOptions: React.FC = () => {
 
@@ -123,6 +126,32 @@ const CanvasOptions: React.FC = () => {
         }));
     }
 
+    const downloadDrawing = async () => {
+        const { canvasHistory, canvasHistoryIndex } = GlobalInformation;
+        if (canvasHistory.length === 0)
+            return;
+        const dataURL = canvasHistory[canvasHistoryIndex];
+        if (!dataURL)
+            return;
+        const base64Data = dataURL.split(',')[1];
+        const randomNum = Math.floor(Math.random() * 100000000) + 1;
+        const filePath = `${RNFS.DocumentDirectoryPath}/drawing_${randomNum}.png`;
+        try {
+            await RNFS.writeFile(filePath, base64Data, 'base64');
+            const shareOptions = {
+                title: 'Save/Share Drawing',
+                url: `file://${filePath}`,
+                type: 'image/png',
+            };
+            await Share.open(shareOptions);
+            Alert.alert('Success', `Drawing saved/shared!`);
+        }
+        catch (error: any) {
+            Alert.alert('Error', 'Failed to save/share the drawing!');
+            console.log('Image download error: ', error);
+        }
+    }
+
     return (
         <View style={styles.canvasOptions}>
             <TouchableHighlight
@@ -161,6 +190,16 @@ const CanvasOptions: React.FC = () => {
             >
                 <FontAwesome6
                     name="pencil"
+                    size={wp(8.5)}
+                    color="black"
+                />
+            </TouchableHighlight>
+            <TouchableHighlight
+                onPress={() => downloadDrawing()}
+                underlayColor="#F5F5F5"
+            >
+                <AntDesign
+                    name="download"
                     size={wp(8.5)}
                     color="black"
                 />
