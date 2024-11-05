@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useRef } from 'react';
+import React, { useEffect, useContext, useRef, useCallback } from 'react';
 import {
     SafeAreaView,
     StyleSheet,
@@ -13,6 +13,7 @@ import { GlobalContext } from '@contextAPI/contexts/GlobalContext';
 const Home: React.FC = () => {
 
     const ref = useRef<Canvas>(null);
+    const interactionTimeout = useRef<NodeJS.Timeout | null>(null);
 
     const context = useContext(GlobalContext);
     const { globalState, setGlobalState } = context;
@@ -28,20 +29,34 @@ const Home: React.FC = () => {
         }));
     }, []);
 
+    const startHideTimeout = useCallback(() => {
+        if (interactionTimeout.current) {
+            clearTimeout(interactionTimeout.current);
+        }
+        interactionTimeout.current = setTimeout(() => {
+            setGlobalState(prevState => ({
+                ...prevState,
+                GlobalInformation: {
+                    ...prevState.GlobalInformation,
+                    penThicknessButtonClicked: false,
+                }
+            }));
+        }, 2000);
+    }, [setGlobalState]);
+
     useEffect(() => {
         if (GlobalInformation.penThicknessButtonClicked) {
-            const timer = setTimeout(() => {
-                setGlobalState(prevState => ({
-                    ...prevState,
-                    GlobalInformation: {
-                        ...prevState.GlobalInformation,
-                        penThicknessButtonClicked: false,
-                    }
-                }));
-            }, 2000);
-            return () => clearTimeout(timer);
+            startHideTimeout();
         }
-    }, [GlobalInformation.penThicknessButtonClicked]);
+    }, [GlobalInformation.penThicknessButtonClicked, startHideTimeout]);
+
+    useEffect(() => {
+        return () => {
+            if (interactionTimeout.current) {
+                clearTimeout(interactionTimeout.current);
+            }
+        };
+    }, []);
 
     return (
         <SafeAreaView style={styles.container}>
@@ -49,7 +64,9 @@ const Home: React.FC = () => {
             <CanvasOptions />
             <CanvasContainer />
             {
-                GlobalInformation.penThicknessButtonClicked && <PenThicknessChanger />
+                GlobalInformation.penThicknessButtonClicked && (
+                    <PenThicknessChanger onInteraction={startHideTimeout} />
+                )
             }
         </SafeAreaView>
     );

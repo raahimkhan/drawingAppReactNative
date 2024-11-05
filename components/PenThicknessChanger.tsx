@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, memo } from 'react';
 import {
     StyleSheet,
     View,
@@ -11,9 +11,11 @@ import {
     heightPercentageToDP as hp
 } from 'react-native-responsive-screen';
 
-const PenThicknessChanger: React.FC = () => {
+interface PenThicknessChangerProps {
+    onInteraction: () => void;
+}
 
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+const PenThicknessChanger: React.FC<PenThicknessChangerProps> = ({ onInteraction }) => {
 
     const context = useContext(GlobalContext);
     const { globalState, setGlobalState } = context;
@@ -27,27 +29,8 @@ const PenThicknessChanger: React.FC = () => {
                 penThickness: value,
             }
         }));
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-        }
-        timeoutRef.current = setTimeout(() => {
-            setGlobalState(prevState => ({
-                ...prevState,
-                GlobalInformation: {
-                    ...prevState.GlobalInformation,
-                    penThicknessButtonClicked: false,
-                }
-            }));
-        }, 2000);
+        onInteraction();
     }
-
-    useEffect(() => {
-        return () => {
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-            }
-        };
-    }, []);
 
     return (
         <View style={styles.sliderContainer}>
@@ -92,4 +75,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default PenThicknessChanger;
+export default memo(PenThicknessChanger);
